@@ -58,7 +58,6 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                    CLLocationCoordinate2D(latitude: 37.323356421896314, longitude: -122.03960862010717),
                                                    CLLocationCoordinate2D(latitude: 37.343130655841115, longitude: -122.04149689525366)]
 
-    
     var sideMenuTable: UITableView = UITableView(frame: CGRect.zero)
     private let myArray: NSArray =  [
         menuItem(icon_name: "menu", title: "Profile", vw: ProfileViewController()),
@@ -80,6 +79,7 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.setupMenuBtn()
         
         mapView.delegate = self
+        mapView.translatesAutoresizingMaskIntoConstraints = false
         
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest

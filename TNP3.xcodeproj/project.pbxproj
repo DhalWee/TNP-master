@@ -10,7 +10,6 @@
 		4A9D84F3509C12B6EC041CDA /* Pods_TNP3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B03B49F1A2F683F41EDABC72 /* Pods_TNP3.framework */; };
 		5019FD92219088C700241E89 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5019FD8F219088C700241E89 /* Global.swift */; };
 		5019FD94219088C700241E89 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5019FD91219088C700241E89 /* Extensions.swift */; };
-		5019FD96219089EC00241E89 /* MainMapPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5019FD95219089EC00241E89 /* MainMapPage.swift */; };
 		88FDC28C2876DF3BA244216F /* Pods_TNP3UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 942A01EB1948E00DE18CA06B /* Pods_TNP3UITests.framework */; };
 		BD40C7A22187C46C00065249 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD40C7A12187C46C00065249 /* ProfileViewController.swift */; };
 		BD40C7A42187C6EA00065249 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD40C7A32187C6EA00065249 /* MenuCell.swift */; };
@@ -51,7 +50,6 @@
 		3A4C83EE84CCDAFE9457E419 /* Pods-TNP3Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TNP3Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TNP3Tests/Pods-TNP3Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		5019FD8F219088C700241E89 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		5019FD91219088C700241E89 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		5019FD95219089EC00241E89 /* MainMapPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMapPage.swift; sourceTree = "<group>"; };
 		8B628EC234684FA89053F87D /* Pods-TNP3.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TNP3.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TNP3/Pods-TNP3.debug.xcconfig"; sourceTree = "<group>"; };
 		8C19FBB158B0F7FD4C5EA38C /* Pods-TNP3UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TNP3UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TNP3UITests/Pods-TNP3UITests.release.xcconfig"; sourceTree = "<group>"; };
 		926E4F9FF4BD032E6E49F9E9 /* Pods-TNP3UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TNP3UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TNP3UITests/Pods-TNP3UITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -196,7 +194,6 @@
 				BD40C7A52189C66800065249 /* SignUpController.swift */,
 				BD8EE33B2185E78C00771FBC /* MainController.swift */,
 				BD40C7A12187C46C00065249 /* ProfileViewController.swift */,
-				5019FD95219089EC00241E89 /* MainMapPage.swift */,
 			);
 			path = Pages;
 			sourceTree = "<group>";
@@ -485,7 +482,6 @@
 				BD40C7A22187C46C00065249 /* ProfileViewController.swift in Sources */,
 				5019FD94219088C700241E89 /* Extensions.swift in Sources */,
 				BD55CB2C21808CAE002233F5 /* SignInController.swift in Sources */,
-				5019FD96219089EC00241E89 /* MainMapPage.swift in Sources */,
 				BD40C7A62189C66800065249 /* SignUpController.swift in Sources */,
 				BD81B013218051E400C3DFD3 /* AppDelegate.swift in Sources */,
 			);
@@ -663,15 +659,17 @@
 			baseConfigurationReference = 8B628EC234684FA89053F87D /* Pods-TNP3.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 649M8TPCDZ;
+				DEVELOPMENT_TEAM = B9HLXJHD88;
 				INFOPLIST_FILE = TNP3/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = baytoor.tnp;
+				PRODUCT_BUNDLE_IDENTIFIER = alisher.TNP3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -682,15 +680,17 @@
 			baseConfigurationReference = FA4CE6277BC8116CF1C6908B /* Pods-TNP3.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 649M8TPCDZ;
+				DEVELOPMENT_TEAM = B9HLXJHD88;
 				INFOPLIST_FILE = TNP3/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = baytoor.tnp;
+				PRODUCT_BUNDLE_IDENTIFIER = alisher.TNP3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
