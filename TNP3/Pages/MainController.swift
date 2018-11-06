@@ -47,6 +47,7 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var zoomLevel: Float = 15.0
     var camera = GMSCameraPosition()
     var myMarker = GMSMarker()
+    var selectedParkingPlace: CLLocationCoordinate2D = CLLocationCoordinate2D()
     
     var myLocation: CLLocation = CLLocation()
     
@@ -364,6 +365,12 @@ extension MainController {
         myMarker.map = mapView
     }
     
+    func clearMap() {
+        mapView.clear()
+        putMarks()
+        updateMyMarker(myLocation)
+    }
+    
     func putRoad(to: CLLocationCoordinate2D) {
         mapView.clear()
         putMarks()
@@ -470,7 +477,13 @@ extension MainController: CLLocationManagerDelegate, GMSMapViewDelegate {
     }
 
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        putRoad(to: marker.position)
-        return true
-    }
+        if selectedParkingPlace.latitude == marker.position.latitude && selectedParkingPlace.longitude == marker.position.longitude {
+            selectedParkingPlace = CLLocationCoordinate2D()
+            //remove polyline
+            clearMap()
+        } else {
+            putRoad(to: marker.position)
+            selectedParkingPlace = marker.position
+        }
+        return true    }
 }
