@@ -45,6 +45,8 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var mapView: GMSMapView!
     var placesClient: GMSPlacesClient!
     var zoomLevel: Float = 15.0
+    var camera = GMSCameraPosition()
+    var myMarker = GMSMarker()
     
     var myLocation: CLLocation = CLLocation()
     
@@ -56,7 +58,8 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var parkingPlaces: [CLLocationCoordinate2D] = [CLLocationCoordinate2D(latitude: 37.329398, longitude: -122.031365),
                                                    CLLocationCoordinate2D(latitude: 37.323356421896314, longitude: -122.03960862010717),
-                                                   CLLocationCoordinate2D(latitude: 37.343130655841115, longitude: -122.04149689525366)]
+                                                   CLLocationCoordinate2D(latitude: 37.343130655841115, longitude: -122.04149689525366),
+                                                   CLLocationCoordinate2D(latitude: 37.36270915060124, longitude: -122.05338377505541)]
 
     var sideMenuTable: UITableView = UITableView(frame: CGRect.zero)
     private let myArray: NSArray =  [
@@ -125,7 +128,6 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func setupGoogleMap(){
-        let camera = GMSCameraPosition.camera(withLatitude: -33.76, longitude: 151.20, zoom: 15)
         mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         
         self.WrapperView.addSubview(mapView)
@@ -204,7 +206,7 @@ class MainController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //        cell.menu_icon.image = UIImage(named: (myArray[indexPath.row] as! menuItem).icon_name)
         return cell
     }
-        
+    
 }
 
 
@@ -322,22 +324,22 @@ extension MainController {
             make.centerX.equalTo(backView)
             make.centerY.equalTo(backView)
         }
-        
+
         return backView
     }
-    
+
     // Populate the array with the list of likely places.
     func listLikelyPlaces() {
         // Clean up from previous sessions.
         likelyPlaces.removeAll()
-        
+
         placesClient.currentPlace(callback: { (placeLikelihoods, error) -> Void in
             if let error = error {
                 // TODO: Handle the error.
                 print("Current Place error: \(error.localizedDescription)")
                 return
             }
-            
+
             // Get likely places and add to the list.
             if let likelihoodList = placeLikelihoods {
                 for likelihood in likelihoodList.likelihoods {
@@ -347,12 +349,19 @@ extension MainController {
             }
         })
     }
-    
+
     func setNewMarker(_ markerView: UIView,_ location: CLLocation) {
+        print("MSG set new marker")
         let marker = GMSMarker()
         marker.iconView = markerView
         marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         marker.map = mapView
+    }
+    
+    func updateMyMarker(_ location: CLLocation) {
+        myMarker.iconView = setMyMarkerView()
+        myMarker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        myMarker.map = mapView
     }
     
     func putRoad(to: CLLocationCoordinate2D) {
@@ -362,12 +371,13 @@ extension MainController {
         
         let origin = "\(myLocation.coordinate.latitude),\(myLocation.coordinate.longitude)"
         let destination = "\(to.latitude),\(to.longitude)"
-        
+
         let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving&key=\(googleAPI)"
         let url = URL(string: urlString)
-        
+
         Alamofire.request(url!).responseJSON { (response) in
             do {
+                print("MSG alamofire")
                 let json = try JSON(data: response.data!)
                 let routes = json["routes"].arrayValue
                 for route in routes
@@ -379,15 +389,18 @@ extension MainController {
                     polyline.strokeWidth = 5
                     polyline.strokeColor = UIColor(hex: blue)
                     polyline.map = self.mapView
+                    print(polyline)
+                    print(self.mapView)
                 }
             } catch let error as NSError {
                 print("MSG: json error \(error)")
             }
         }
-        
+
     }
-    
+
     func putMarks() {
+        print("MSG putMarks")
         for i in 0..<parkingPlaces.count {
             let coordinate = parkingPlaces[i]
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -397,7 +410,6 @@ extension MainController {
             } else {
                 markerView = setNewMarkerView(color: UIColor(hex: green), label: "\(i+1)")
             }
-            
             setNewMarker(markerView, location)
             print("Added: \(i) marker")
         }
@@ -408,16 +420,16 @@ extension MainController {
 
 //Map delegation
 extension MainController: CLLocationManagerDelegate, GMSMapViewDelegate {
-    
+
     // Handle incoming location events.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         myLocation = locations.last!
         print("Location: \(myLocation)")
         
-        let camera = GMSCameraPosition.camera(withLatitude: myLocation.coordinate.latitude,
+        camera = GMSCameraPosition.camera(withLatitude: myLocation.coordinate.latitude,
                                               longitude: myLocation.coordinate.longitude,
                                               zoom: zoomLevel)
-        setNewMarker(setMyMarkerView(), myLocation)
+        updateMyMarker(myLocation)
         
         
         if mapView.isHidden {
@@ -429,7 +441,7 @@ extension MainController: CLLocationManagerDelegate, GMSMapViewDelegate {
         
         listLikelyPlaces()
     }
-    
+
     // Handle authorization for the location manager.
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
@@ -446,17 +458,17 @@ extension MainController: CLLocationManagerDelegate, GMSMapViewDelegate {
             print("Location status is OK.")
         }
     }
-    
+
     // Handle location manager errors.
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         locationManager.stopUpdatingLocation()
         print("Error: \(error)")
     }
-    
+
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         print("You tapped at \(coordinate.latitude), \(coordinate.longitude)")
     }
-    
+
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         putRoad(to: marker.position)
         return true
