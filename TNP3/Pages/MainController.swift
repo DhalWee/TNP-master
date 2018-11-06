@@ -352,7 +352,6 @@ extension MainController {
     }
 
     func setNewMarker(_ markerView: UIView,_ location: CLLocation) {
-        print("MSG set new marker")
         let marker = GMSMarker()
         marker.iconView = markerView
         marker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
@@ -360,6 +359,7 @@ extension MainController {
     }
     
     func updateMyMarker(_ location: CLLocation) {
+        putRoad(to: selectedParkingPlace)
         myMarker.iconView = setMyMarkerView()
         myMarker.position = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         myMarker.map = mapView
@@ -371,43 +371,56 @@ extension MainController {
         updateMyMarker(myLocation)
     }
     
+    func getRadius(_ destination: CLLocationCoordinate2D) -> CLLocationDistance {
+        // init center location from center coordinate
+        let centerLocation = CLLocation(latitude: destination.latitude, longitude: destination.longitude)
+        let topCenterLocation = CLLocation(latitude: myLocation.coordinate.latitude, longitude: myLocation.coordinate.longitude)
+        let radius = CLLocationDistance(centerLocation.distance(from: topCenterLocation))
+        
+        return round(radius)
+    }
+    
     func putRoad(to: CLLocationCoordinate2D) {
         mapView.clear()
         putMarks()
         setNewMarker(setMyMarkerView(), myLocation)
         
-        let origin = "\(myLocation.coordinate.latitude),\(myLocation.coordinate.longitude)"
-        let destination = "\(to.latitude),\(to.longitude)"
-
-        let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving&key=\(googleAPI)"
-        let url = URL(string: urlString)
-
-        Alamofire.request(url!).responseJSON { (response) in
-            do {
-                print("MSG alamofire")
-                let json = try JSON(data: response.data!)
-                let routes = json["routes"].arrayValue
-                for route in routes
-                {
-                    let routeOverviewPolyline = route["overview_polyline"].dictionary
-                    let points = routeOverviewPolyline?["points"]?.stringValue
-                    let path = GMSPath.init(fromEncodedPath: points!)
-                    let polyline = GMSPolyline.init(path: path)
-                    polyline.strokeWidth = 5
-                    polyline.strokeColor = UIColor(hex: blue)
-                    polyline.map = self.mapView
-                    print(polyline)
-                    print(self.mapView)
+        let distanceToDestination = getRadius(to)
+        print("MSG: distance to \(distanceToDestination) meters")
+        
+        if distanceToDestination < 30 {
+            //Call trigger view
+            
+        } else {
+            let origin = "\(myLocation.coordinate.latitude),\(myLocation.coordinate.longitude)"
+            let destination = "\(to.latitude),\(to.longitude)"
+            
+            let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving&key=\(googleAPI)"
+            let url = URL(string: urlString)
+            
+            Alamofire.request(url!).responseJSON { (response) in
+                do {
+                    let json = try JSON(data: response.data!)
+                    let routes = json["routes"].arrayValue
+                    for route in routes
+                    {
+                        let routeOverviewPolyline = route["overview_polyline"].dictionary
+                        let points = routeOverviewPolyline?["points"]?.stringValue
+                        let path = GMSPath.init(fromEncodedPath: points!)
+                        let polyline = GMSPolyline.init(path: path)
+                        polyline.strokeWidth = 5
+                        polyline.strokeColor = UIColor(hex: blue)
+                        polyline.map = self.mapView
+                    }
+                } catch let error as NSError {
+                    print("MSG: json error \(error)")
                 }
-            } catch let error as NSError {
-                print("MSG: json error \(error)")
             }
         }
-
+        
     }
 
     func putMarks() {
-        print("MSG putMarks")
         for i in 0..<parkingPlaces.count {
             let coordinate = parkingPlaces[i]
             let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -418,7 +431,6 @@ extension MainController {
                 markerView = setNewMarkerView(color: UIColor(hex: green), label: "\(i+1)")
             }
             setNewMarker(markerView, location)
-            print("Added: \(i) marker")
         }
     }
     
